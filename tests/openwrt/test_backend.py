@@ -548,7 +548,7 @@ config wifi-iface 'wifi_wlan0'
             expected = {
                 'zerotier': [
                     {
-                        'name': 'ow_zt',
+                        'name': 'global',
                         'networks': [],
                         'secret': '{{secret}}',
                         'config_path': '/etc/openwisp/zerotier',
@@ -561,7 +561,7 @@ config wifi-iface 'wifi_wlan0'
             expected = {
                 'zerotier': [
                     {
-                        'name': 'ow_zt',
+                        'name': 'global',
                         'networks': [
                             {'id': '9536600adf654321', 'ifname': 'owzt654321'}
                         ],

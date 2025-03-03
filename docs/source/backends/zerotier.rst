@@ -300,7 +300,7 @@ Required properties:
 ==================== ======= ========================== =========================
 key name             type    default                    description
 ==================== ======= ========================== =========================
-``name``             string  ``ow_zt``                  name of the zerotier
+``name``             string  ``global``                 name of the zerotier
                                                         network
 ``networks``         list    ``[{}]``                   list of dictionaries
                                                         containing strings with
@@ -363,7 +363,7 @@ Example (with custom zerotier interface name):
     from netjsonconfig import OpenWrt
 
     client_config = OpenWrt.zerotier_auto_client(
-        name="ow_zt",
+        name="global",
         networks=[{"id": "9536600adf654321", "ifname": "owzt654321"}],
     )
     print(OpenWrt(client_config).render())
@@ -374,12 +374,15 @@ Will be rendered as:
 
     package zerotier
 
-    config zerotier 'ow_zt'
+    config zerotier 'global'
         option config_path '/etc/openwisp/zerotier'
         option copy_config_path '1'
         option enabled '1'
         list join '9536600adf654321'
         option secret '{{secret}}'
+
+    config network 'owzt654321'
+        option id '9536600adf654321'
 
     # ---------- files ---------- #
 
@@ -446,7 +449,7 @@ Now add ``local_conf_path`` option to ``/etc/config/zerotier``:
 
     package zerotier
 
-    config zerotier 'ow_zt'
+    config zerotier 'global'
         option enabled '1'
         list join '9536600adf654322'
         option secret '{{secret}}'

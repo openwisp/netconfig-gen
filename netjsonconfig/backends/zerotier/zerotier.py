@@ -17,7 +17,7 @@ class ZeroTier(BaseVpnBackend):
     @classmethod
     def auto_client(
         cls,
-        name='ow_zt',
+        name='global',
         networks=None,
         identity_secret='{{secret}}',
         config_path='/etc/openwisp/zerotier',

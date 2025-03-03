@@ -12,7 +12,7 @@ class TestZeroTier(unittest.TestCase, _TabsMixin):
         "zerotier": [
             {
                 "local_conf_path": "/etc/openwisp/zerotier/zerotier.conf",
-                "name": "ow_zt",
+                "name": "global",
                 "networks": [
                     {
                         "id": "9536600adf654321",
@@ -36,7 +36,7 @@ class TestZeroTier(unittest.TestCase, _TabsMixin):
     }
     _multiple_networks_uci = """package zerotier
 
-config zerotier 'ow_zt'
+config zerotier 'global'
     option config_path '/etc/openwisp/zerotier'
     option copy_config_path '1'
     option enabled '1'
@@ -77,11 +77,11 @@ config network 'owzt654322'
     _TEST_DIFF_NAME_MULTIPLE_CONFIG = {
         "zerotier": [
             {
-                "name": "ow_zt1",
+                "name": "global1",
                 "networks": [{"id": "9536600adf654321", "ifname": "owzt654321"}],
             },
             {
-                "name": "ow_zt2",
+                "name": "global2",
                 "networks": [{"id": "9536600adf654322", "ifname": "owzt654322"}],
             },
         ]
@@ -96,7 +96,7 @@ config network 'owzt654322'
         native = self._tabs(
             """package zerotier
 
-config zerotier 'ow_zt'
+config zerotier 'global'
     option enabled '0'
     option local_conf '/etc/openwisp/zerotier/zerotier.conf'
     list join '9536600adf654321'
@@ -111,7 +111,7 @@ config zerotier 'ow_zt'
                         {"id": "9536600adf654321", "ifname": "owzt654321"},
                         {"id": "9536600adf654322", "ifname": "owzt654322"},
                     ],
-                    "name": "ow_zt",
+                    "name": "global",
                     "disabled": True,
                 },
             ]
@@ -123,7 +123,7 @@ config zerotier 'ow_zt'
         native = self._tabs(
             """package zerotier
 
-config zerotier 'ow_zt'
+config zerotier 'global'
     option enabled '0'
     option local_conf_path '/etc/openwisp/zerotier/zerotier.conf'
 
@@ -153,7 +153,7 @@ config network
                             "allow_dns": False,
                         },
                     ],
-                    "name": "ow_zt",
+                    "name": "global",
                     "disabled": True,
                 },
             ]
