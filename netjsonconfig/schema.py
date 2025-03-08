@@ -14,8 +14,10 @@ from .countries import countries
 
 DEFAULT_FILE_MODE = '0644'
 X509_FILE_MODE = '0600'
+VAR_PATTERN = '([{]{2}.*[}]{2})'
 MAC_PATTERN = '([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})'
-MAC_PATTERN_BLANK = '^({0}|)$'.format(MAC_PATTERN)
+MAC_VAR_PATTERN = '^({0}|{1})$'.format(MAC_PATTERN, VAR_PATTERN)
+MAC_VAR_BLANK_PATTERN = '^({0}|)$'.format(MAC_VAR_PATTERN)
 
 schema = {
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -146,8 +148,7 @@ schema = {
                     "type": "string",
                     "title": "MAC address",
                     "description": "if specified overrides default macaddress for this interface",
-                    "pattern": MAC_PATTERN_BLANK,  # can be empty
-                    "maxLength": 17,
+                    "pattern": MAC_VAR_BLANK_PATTERN,  # can be empty
                     "propertyOrder": 3,
                 },
                 "autostart": {
@@ -324,8 +325,7 @@ schema = {
                 "bssid": {
                     "type": "string",
                     "title": "BSSID",
-                    "pattern": MAC_PATTERN_BLANK,
-                    "maxLength": 17,
+                    "pattern": MAC_VAR_BLANK_PATTERN,  # can be empty
                     "propertyOrder": 4,
                 },
             }
@@ -875,7 +875,7 @@ schema = {
                     "required": ["bssid"],
                     "properties": {
                         "mode": {"enum": ["adhoc"]},
-                        "bssid": {"pattern": MAC_PATTERN, "minLength": 17},
+                        "bssid": {"pattern": MAC_VAR_PATTERN},
                     },
                 },
                 {"$ref": "#/definitions/base_wireless_settings"},
