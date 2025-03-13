@@ -8,6 +8,34 @@ from time import sleep
 from netjsonconfig import OpenWrt
 from netjsonconfig.exceptions import ValidationError
 from netjsonconfig.utils import _TabsMixin
+from netjsonconfig.backends.openwrt.converters.base import OpenWrtConverter
+
+
+class CoovaConverter(OpenWrtConverter):
+    netjson_key = 'chilli'
+    _uci_types = ['chilli']
+
+    def to_intermediate_loop(self, block, result, index=None):
+        if block:
+            block.update({
+                '.type': 'chilli',
+                '.name': 'chilli'
+            })
+        result['chilli'] = [self.sorted_dict(block)]
+        return result
+
+
+class CoovaPlugin(object):
+    key = 'chilli'
+    converter = CoovaConverter
+    schema = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+             "disabled": {"type": "integer"},
+             "uamsecret": {"type": "string"},
+         },
+    }
 
 
 class TestBackend(unittest.TestCase, _TabsMixin):
@@ -18,6 +46,37 @@ class TestBackend(unittest.TestCase, _TabsMixin):
         o = OpenWrt(config)
         o.validate()
         self.assertDictEqual(config, {'interfaces': []})
+
+    def test_plugin(self):
+        config = {
+            "chilli": {
+                'disabled': 1,
+                'uamsecret': 'asd123fghj'
+            },
+        }
+        OpenWrt.add_plugins([CoovaPlugin()])
+        o = OpenWrt(config)
+        self.assertEqual(self._tabs('''package chilli
+
+config chilli 'chilli'
+    option disabled '1'
+    option uamsecret 'asd123fghj'
+'''), o.render())
+
+    def test_bad_plugin_config(self):
+        config = {
+            "chilli": {
+                'disabled': 'wrong_value',
+                'uamsecret': 'asd123fghj'
+            },
+        }
+        OpenWrt.add_plugins([CoovaPlugin()])
+        o = OpenWrt(config)
+        try:
+            o.render()
+            self.fail()
+        except ValidationError as e:
+            self.assertEqual(e.message, "'wrong_value' is not of type 'integer'")
 
     def test_json_method(self):
         config = {

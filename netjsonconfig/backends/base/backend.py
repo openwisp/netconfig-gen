@@ -25,6 +25,7 @@ class BaseBackend(object):
     schema = None
     FILE_SECTION_DELIMITER = '# ---------- files ---------- #'
     list_identifiers = []
+    plugins = []
 
     def __init__(self, config=None, native=None, templates=None, context=None):
         """
@@ -54,6 +55,17 @@ class BaseBackend(object):
                 'Expecting either config or native argument to be '
                 'passed during the initialization of the backend'
             )
+
+    @classmethod
+    def add_plugins(cls, plugins):
+        for plugin in plugins:
+            plugin.schema.pop('$schema', None)
+            if getattr(cls, 'schema'):
+                cls.schema['properties'][plugin.key] = plugin.schema
+                if getattr(cls, 'converters'):
+                    cls.converters.append(plugin.converter)
+                else:
+                    cls.converters = [plugin.converter]
 
     def _load(self, config):
         """
