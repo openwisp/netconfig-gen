@@ -37,7 +37,13 @@ class OpenWrt(BaseBackend):
     list_identifiers = ['name', 'config_value', 'id']
 
     def __init__(
-        self, config=None, native=None, templates=None, context=None, dsa=True
+        self,
+        config=None,
+        native=None,
+        templates=None,
+        templates_list_handling=None,
+        context=None,
+        dsa=True,
     ):
         """
         :param config: ``dict`` containing a valid **NetJSON** configuration dictionary
@@ -53,7 +59,7 @@ class OpenWrt(BaseBackend):
                            ``templates`` is not of type ``list``
         """
         self.dsa = dsa
-        super().__init__(config, native, templates, context)
+        super().__init__(config, native, templates, templates_list_handling, context)
 
     def validate(self):
         self._validate_radios()

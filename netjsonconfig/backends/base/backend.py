@@ -26,7 +26,14 @@ class BaseBackend(object):
     FILE_SECTION_DELIMITER = '# ---------- files ---------- #'
     list_identifiers = []
 
-    def __init__(self, config=None, native=None, templates=None, context=None):
+    def __init__(
+        self,
+        config=None,
+        native=None,
+        templates=None,
+        templates_list_handling=None,
+        context=None,
+    ):
         """
         :param config: ``dict`` containing a valid **NetJSON** configuration dictionary
         :param native: ``str`` or file object representing a native configuration that will
@@ -44,7 +51,7 @@ class BaseBackend(object):
         if config is not None:
             # perform deepcopy to avoid modifying the original config argument
             config = deepcopy(self._load(config))
-            self.config = self._merge_config(config, templates)
+            self.config = self._merge_config(config, templates, templates_list_handling)
             self.config = self._evaluate_vars(self.config, context)
         # backward conversion (native configuration > NetJSON)
         elif native is not None:
@@ -70,7 +77,7 @@ class BaseBackend(object):
             )
         return config
 
-    def _merge_config(self, config, templates):
+    def _merge_config(self, config, templates, templates_list_handling):
         """
         Merges config with templates
         """
@@ -82,8 +89,18 @@ class BaseBackend(object):
         # merge templates with main configuration
         result = {}
         config_list = templates + [config]
-        for merging in config_list:
-            result = merge_config(result, self._load(merging), self.list_identifiers)
+        for i, merging in enumerate(config_list):
+            if i < len(templates):
+                result = merge_config(
+                    result,
+                    self._load(merging),
+                    self.list_identifiers,
+                    templates_list_handling[i],
+                )
+            else:
+                result = merge_config(
+                    result, self._load(merging), self.list_identifiers
+                )
         return result
 
     def _evaluate_vars(self, config, context):
